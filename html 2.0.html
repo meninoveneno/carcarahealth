@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carcará Health - Registro de Dados de Saúde</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div id="home" class="screen active">
+            <h1>Carcará Health</h1>
+            <p>Feito por acadêmicos de medicina do grupo B de Inovação em Saúde |FUNORTE 2025.1</p>
+            <button onclick="showScreen('healthData')">Começar</button>
+            <!-- Novo botão redondo com ícone de rosto no canto superior direito -->
+            <button class="edit-profile-btn" onclick="showProfilePopup()" aria-label="Editar Perfil">
+                <i class="ph ph-user-circle"></i>
+            </button>
+            <!-- Novo botão de Histórico -->
+            <button onclick="showHistory()">Histórico de Aferições</button>
+            <!-- Botão de emergência -->
+            <button class="emergency-btn" onclick="callSamu()">EMERGÊNCIA</button>
+        </div>
+
+        <div id="healthData" class="screen">
+            <h2>Registrar Dados de Saúde</h2>
+            <input type="number" id="glucose" placeholder="Glicose (mg/dL)" required>
+            <input type="number" id="systolic" placeholder="Pressão Sistólica (mmHg)" required>
+            <input type="number" id="diastolic" placeholder="Pressão Diastólica (mmHg)" required>
+            <button onclick="saveHealthData()">Registrar</button>
+            <button class="back-btn" onclick="showScreen('home')">Voltar</button>
+        </div>
+
+        <div id="viewData" class="screen">
+            <h2>Dados Registrados</h2>
+            <ul id="dataList"></ul>
+            <button class="export-btn" onclick="exportToPDF()">Exportar PDF</button>
+            <button class="back-btn" onclick="showScreen('healthData')">Voltar</button>
+        </div>
+
+        <div id="profile" class="screen">
+            <h2>Perfil do Usuário</h2>
+            <input type="text" id="profileName" placeholder="Nome" required>
+            <input type="date" id="profileDob" required>
+            <input type="text" id="profileSus" placeholder="Número do Cartão SUS" required>
+            <button onclick="saveProfileData()">Salvar Alterações</button>
+            <button onclick="showScreen('home')">Voltar</button>
+            <!-- Novo botão "Sobre o Carcará Health" -->
+            <button onclick="showAboutPopup()">Sobre o Carcará Health</button>
+        </div>
+
+        <!-- Pop-up de Histórico de Aferições -->
+        <div id="historyPopup" class="popup">
+            <div class="popup-content">
+                <h3>Histórico de Aferições</h3>
+                <ul id="historyList"></ul>
+                <button onclick="exportHistoryToPDF()">Exportar Histórico</button>
+                <button onclick="closeHistoryPopup()">Fechar</button>
+            </div>
+        </div>
+
+        <!-- Pop-up para Editar Perfil -->
+        <div id="profilePopup" class="popup">
+            <div class="popup-content">
+                <h3>Editar Perfil</h3>
+                <input type="text" id="popupName" placeholder="Nome Completo" required>
+                <input type="date" id="popupDob" required>
+                <input type="text" id="popupSus" placeholder="Número do Cartão SUS" required>
+                <button onclick="saveProfilePopupData()">Salvar Alterações</button>
+                <button onclick="closeProfilePopup()">Fechar</button>
+            </div>
+        </div>
+
+        <!-- Pop-up "Sobre o Carcará Health" -->
+        <div id="aboutPopup" class="popup">
+            <div class="popup-content">
+                <h3>Sobre o Carcará Health</h3>
+                <p>Este aplicativo foi desenvolvido por:</p>
+                <ul>
+                    <li>Daiane Cavalcanti</li>
+                    <li>Farley Eleandro</li>
+                    <li>Fernanda Santos</li>
+                    <li>Maria Cecília</li>
+                    <li>Maria Fernanda</li>
+                    <li>Maria Helena</li>
+                    <li>Marcela Alencar</li>
+                    <li>Ian Bastos</li>
+                    <li>Ingrid Barbosa</li>
+                    <li>Lara</li>
+                </ul>
+                <button onclick="closeAboutPopup()">Fechar</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Carregar scripts no final para melhor performance -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="script.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #1E90FF, #FF4500);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #app {
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        .screen {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        button {
+            background: #FF4500;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 10px;
+        }
+        button:hover {
+            background: #D14000;
+        }
+        .export-btn {
+            margin-right: 20px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .profile-btn {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Novo botão redondo de perfil */
+        .edit-profile-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #FF4500;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Botão de emergência */
+        .emergency-btn {
+            background: #FF0000; /* Cor vermelha */
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: 0.3s;
+        }
+
+        .emergency-btn:hover {
+            background: #d10000;
+        }
+
+        /* Pop-up de Histórico */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            #app {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        // Função para alternar entre as telas
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Função para salvar os dados de saúde
+        function saveHealthData() {
+            const glucose = parseFloat(document.getElementById('glucose').value);
+            const systolic = parseFloat(document.getElementById('systolic').value);
+            const diastolic = parseFloat(document.getElementById('diastolic').value);
+            const dateTime = new Date().toLocaleString();
+            let alertMessage = '';
+            if (glucose > 140 || systolic > 130 || diastolic > 90) {
+                alertMessage = 'Valores acima do normal!';
+            }
+            const entry = `${dateTime} - Glicose: ${glucose} mg/dL, Pressão: ${systolic}/${diastolic} mmHg <span style="color:red">${alertMessage}</span>`;
+            document.getElementById('dataList').innerHTML += `<li>${entry}</li>`;
+            document.getElementById('historyList').innerHTML += `<li>${entry}</li>`;
+
+            // Armazenar no localStorage
+            let healthDataHistory = JSON.parse(localStorage.getItem('healthDataHistory')) || [];
+            healthDataHistory.push(entry);
+            localStorage.setItem('healthDataHistory', JSON.stringify(healthDataHistory));
+
+            Swal.fire('Registro salvo!', '', 'success');
+            showScreen('viewData');
+        }
+
+        // Função para salvar as alterações do perfil
+        function saveProfileData() {
+            const name = document.getElementById('profileName').value;
+            const dob = document.getElementById('profileDob').value;
+            const sus = document.getElementById('profileSus').value;
+
+            // Atualizar os dados no perfil
+            document.getElementById('profileName').value = name;
+            document.getElementById('profileDob').value = dob;
+            document.getElementById('profileSus').value = sus;
+
+            Swal.fire('Alterações salvas com sucesso!', '', 'success');
+            showScreen('profile');
+        }
+
+        // Função para abrir o pop-up de histórico
+        function showHistory() {
+            document.getElementById('historyPopup').style.display = 'flex';
+        }
+
+        // Função para fechar o pop-up de histórico
+        function closeHistoryPopup() {
+            document.getElementById('historyPopup').style.display = 'none';
+        }
+
+        // Função para exportar os dados para PDF, incluindo os dados de perfil
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const name = document.getElementById('profileName').value || 'Nome não informado';
+            const dob = document.getElementById('profileDob').value || 'Data de nascimento não informada';
+            const sus = document.getElementById('profileSus').value || 'Número do SUS não informado';
+
+            // Cabeçalho com dados de perfil
+            doc.setFontSize(12);
+            doc.text(`Nome: ${name}`, 10, 10);
+            doc.text(`Data de Nascimento: ${dob}`, 10, 15);
+            doc.text(`Número SUS: ${sus}`, 10, 20);
+            doc.text('Dados de Aferições', 10, 30);
+
+            let content = '';
+            document.querySelectorAll('#dataList li').forEach(item => {
+                content += item.innerText + '\n';
+            });
+
+            doc.setFontSize(10);
+            doc.text(content, 10, 40);
+            doc.save('dados_saude.pdf');
+            Swal.fire('PDF gerado com sucesso!', '', 'success');
+        }
+
+        // Função para salvar as alterações do pop-up de perfil
+        function saveProfilePopupData() {
+            const name = document.getElementById('popupName').value;
+            const dob = document.getElementById('popupDob').value;
+            const sus = document.getElementById('popupSus').value;
+
+            // Atualizar os dados no perfil
+            document.getElementById('profileName').value = name;
+            document.getElementById('profileDob').value = dob;
+            document.getElementById('profileSus').value = sus;
+
+            Swal.fire('Alterações salvas com sucesso!', '', 'success');
+            closeProfilePopup();
+        }
+
+        // Função para abrir o pop-up de editar perfil
+        function showProfilePopup() {
+            // Preencher os campos com os dados atuais
+            document.getElementById('popupName').value = document.getElementById('profileName').value;
+            document.getElementById('popupDob').value = document.getElementById('profileDob').value;
+            document.getElementById('popupSus').value = document.getElementById('profileSus').value;
+
+            document.getElementById('profilePopup').style.display = 'flex';
+        }
+
+        // Função para fechar o pop-up de editar perfil
+        function closeProfilePopup() {
+            document.getElementById('profilePopup').style.display = 'none';
+        }
+
+        // Função para abrir o pop-up "Sobre o Carcará Health"
+        function showAboutPopup() {
+            document.getElementById('aboutPopup').style.display = 'flex';
+        }
+
+        // Função para fechar o pop-up "Sobre o Carcará Health"
+        function closeAboutPopup() {
+            document.getElementById('aboutPopup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
