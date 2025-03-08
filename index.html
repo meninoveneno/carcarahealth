@@ -10,16 +10,21 @@
     <div id="app">
         <div id="home" class="screen active">
             <h1>Carcará Health</h1>
-            <p>Feito por acadêmicos de medicina do grupo B de Inovação em Saúde |FUNORTE 2025.1</p>
-            <button onclick="showScreen('healthData')">Começar</button>
-            <button class="edit-profile-btn" onclick="showProfilePopup()" aria-label="Editar Perfil">
-                <i class="ph ph-user-circle"></i>
-            </button>
-            <button onclick="showHistory()">Histórico de Aferições</button>
-            <!-- Botão de emergência -->
-            <a href="tel:192">
-                <button class="emergency-btn">EMERGÊNCIA</button>
-            </a>
+            <p>Feito por acadêmicos de medicina do grupo B de Inovação e Tecnologia em Saúde |FUNORTE 2025.1</p>
+            <!-- Container para centralizar os botões -->
+            <div class="buttons-container">
+                <button class="main-btn" onclick="showScreen('healthData')">Começar</button>
+                <button class="main-btn" onclick="showHistory()">Histórico de Aferições</button>
+                <button class="main-btn" onclick="showAboutPopup()">Sobre</button>
+            </div>
+
+            <!-- Contêiner para os botões de emergência e editar perfil -->
+            <div class="action-buttons">
+                <a href="tel:192">
+                    <button class="emergency-btn">EMERGÊNCIA</button>
+                </a>
+                <button class="edit-profile-btn" onclick="showScreen('profile')">Editar Perfil</button>
+            </div>
         </div>
 
         <div id="healthData" class="screen">
@@ -43,9 +48,12 @@
             <input type="text" id="profileName" placeholder="Nome" required>
             <input type="date" id="profileDob" required>
             <input type="text" id="profileSus" placeholder="Número do Cartão SUS" required>
+            <!-- Campo de Email -->
+            <input type="email" id="profileEmail" placeholder="Email" required>
+            <!-- Frase informativa abaixo do campo de e-mail -->
+            <p class="info-text">Preencha o campo e-mail se deseja receber informações sobre saúde e bem-estar.</p>
             <button onclick="saveProfileData()">Salvar Alterações</button>
             <button onclick="showScreen('home')">Voltar</button>
-            <button onclick="showAboutPopup()">Sobre o Carcará Health</button>
         </div>
 
         <div id="historyPopup" class="popup">
@@ -63,6 +71,8 @@
                 <input type="text" id="popupName" placeholder="Nome Completo" required>
                 <input type="date" id="popupDob" required>
                 <input type="text" id="popupSus" placeholder="Número do Cartão SUS" required>
+                <!-- Campo de Email -->
+                <input type="email" id="popupEmail" placeholder="Email" required>
                 <button onclick="saveProfilePopupData()">Salvar Alterações</button>
                 <button onclick="closeProfilePopup()">Fechar</button>
             </div>
@@ -82,7 +92,7 @@
                     <li>Marcela Alencar</li>
                     <li>Ian Bastos</li>
                     <li>Ingrid Barbosa</li>
-                    <li>Lara</li>
+                    <li>Lara Regine</li>
                 </ul>
                 <button onclick="closeAboutPopup()">Fechar</button>
             </div>
@@ -105,6 +115,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
         #app {
             background: white;
@@ -114,12 +125,22 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 90%;
             max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
         .screen {
             display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
         .active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
         button {
             background: #FF4500;
@@ -133,6 +154,13 @@
         }
         button:hover {
             background: #D14000;
+            transform: scale(1.1);
+        }
+        .main-btn {
+            width: 100%;
+            font-size: 18px;
+            padding: 15px;
+            margin-top: 15px;
         }
         .export-btn {
             margin-right: 20px;
@@ -152,16 +180,18 @@
         }
 
         .edit-profile-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             background: #FF4500;
-            border: none;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 24px;
             color: white;
-            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+
+        .edit-profile-btn:hover {
+            background: #D14000;
+            transform: scale(1.1);
         }
 
         .popup {
@@ -174,6 +204,8 @@
             background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         .popup-content {
             background: white;
@@ -189,12 +221,37 @@
             padding: 12px 24px;
             font-size: 18px;
             border-radius: 5px;
-            margin-top: 20px;
             transition: 0.3s;
         }
 
         .emergency-btn:hover {
             background-color: #D10000;
+            transform: scale(1.1);
+        }
+
+        /* Container de botões */
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Layout dos botões de emergência e editar perfil */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Estilos para a frase informativa */
+        .info-text {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+            line-height: 1.5;
         }
 
         @media (max-width: 600px) {
@@ -209,7 +266,8 @@
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
             });
-            document.getElementById(screenId).classList.add('active');
+            const nextScreen = document.getElementById(screenId);
+            nextScreen.classList.add('active');
         }
 
         function saveHealthData() {
@@ -237,10 +295,12 @@
             const name = document.getElementById('profileName').value;
             const dob = document.getElementById('profileDob').value;
             const sus = document.getElementById('profileSus').value;
+            const email = document.getElementById('profileEmail').value;
 
             document.getElementById('profileName').value = name;
             document.getElementById('profileDob').value = dob;
             document.getElementById('profileSus').value = sus;
+            document.getElementById('profileEmail').value = email;
 
             Swal.fire('Alterações salvas com sucesso!', '', 'success');
             showScreen('profile');
@@ -248,10 +308,14 @@
 
         function showHistory() {
             document.getElementById('historyPopup').style.display = 'flex';
+            document.getElementById('historyPopup').style.opacity = '1';
         }
 
         function closeHistoryPopup() {
-            document.getElementById('historyPopup').style.display = 'none';
+            document.getElementById('historyPopup').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('historyPopup').style.display = 'none';
+            }, 500);
         }
 
         function exportToPDF() {
@@ -260,12 +324,14 @@
             const name = document.getElementById('profileName').value || 'Nome não informado';
             const dob = document.getElementById('profileDob').value || 'Data de nascimento não informada';
             const sus = document.getElementById('profileSus').value || 'Número do SUS não informado';
+            const email = document.getElementById('profileEmail').value || 'Email não informado';
 
             doc.setFontSize(12);
             doc.text(`Nome: ${name}`, 10, 10);
             doc.text(`Data de Nascimento: ${dob}`, 10, 15);
             doc.text(`Número SUS: ${sus}`, 10, 20);
-            doc.text('Dados de Aferições', 10, 30);
+            doc.text(`Email: ${email}`, 10, 25);
+            doc.text('Dados de Aferições', 10, 35);
 
             let content = '';
             document.querySelectorAll('#dataList li').forEach(item => {
@@ -278,37 +344,45 @@
             Swal.fire('PDF gerado com sucesso!', '', 'success');
         }
 
-        function saveProfilePopupData() {
-            const name = document.getElementById('popupName').value;
-            const dob = document.getElementById('popupDob').value;
-            const sus = document.getElementById('popupSus').value;
+        function exportHistoryToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(12);
+            doc.text('Histórico de Aferições', 10, 10);
 
-            document.getElementById('profileName').value = name;
-            document.getElementById('profileDob').value = dob;
-            document.getElementById('profileSus').value = sus;
+            let content = '';
+            document.querySelectorAll('#historyList li').forEach(item => {
+                content += item.innerText + '\n';
+            });
 
-            Swal.fire('Alterações salvas com sucesso!', '', 'success');
-            closeProfilePopup();
-        }
-
-        function showProfilePopup() {
-            document.getElementById('popupName').value = document.getElementById('profileName').value;
-            document.getElementById('popupDob').value = document.getElementById('profileDob').value;
-            document.getElementById('popupSus').value = document.getElementById('profileSus').value;
-
-            document.getElementById('profilePopup').style.display = 'flex';
-        }
-
-        function closeProfilePopup() {
-            document.getElementById('profilePopup').style.display = 'none';
+            doc.setFontSize(10);
+            doc.text(content, 10, 20);
+            doc.save('historico_afericoes.pdf');
+            Swal.fire('Histórico gerado com sucesso!', '', 'success');
         }
 
         function showAboutPopup() {
             document.getElementById('aboutPopup').style.display = 'flex';
+            document.getElementById('aboutPopup').style.opacity = '1';
         }
 
         function closeAboutPopup() {
-            document.getElementById('aboutPopup').style.display = 'none';
+            document.getElementById('aboutPopup').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('aboutPopup').style.display = 'none';
+            }, 500);
+        }
+
+        function showProfilePopup() {
+            document.getElementById('profilePopup').style.display = 'flex';
+            document.getElementById('profilePopup').style.opacity = '1';
+        }
+
+        function closeProfilePopup() {
+            document.getElementById('profilePopup').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('profilePopup').style.display = 'none';
+            }, 500);
         }
     </script>
 </body>
