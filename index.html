@@ -19,6 +19,7 @@
       overflow: hidden;
     }
     #app {
+      position: relative; /* Adicionado para posicionamento absoluto de elementos internos */
       background: white;
       color: #333;
       padding: 20px;
@@ -160,6 +161,9 @@
 </head>
 <body>
   <div id="app">
+    <!-- Imagem adicionada no canto superior direito (tamanho reduzido) -->
+    <img src="https://logowik.com/content/uploads/images/colored-beta4114.logowik.com.webp" alt="Logo" style="position: absolute; top: 10px; right: 10px; height: 40px; width: auto;">
+    
     <div id="home" class="screen active">
       <h1>
         <img src="https://png.pngtree.com/png-vector/20240531/ourmid/pngtree-bird-of-prey-with-a-yellow-beak-png-image_12588694.png" alt="Ícone Carcará Health" style="vertical-align: middle; height: 50px; margin-right: 10px;">
